@@ -1,37 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Upload MP4 Video</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-        }
-        video {
-            margin-top: 20px;
-            max-width: 100%;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>My Video Player</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: #fff;
+    padding: 20px;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+h1 {
+    text-align: center;
+}
+.upload-box {
+    border: 2px dashed #38bdf8;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.upload-box:hover {
+    background: #020617;
+}
+input[type=file] {
+    display: none;
+}
+video {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+.video-list {
+    margin-top: 20px;
+}
+.video-item {
+    padding: 10px;
+    border-bottom: 1px solid #334155;
+    cursor: pointer;
+}
+.video-item:hover {
+    background: #1e293b;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Select MP4 Video</h2>
+<div class="container">
+    <h1>🎬 My Video Library</h1>
 
-<input type="file" id="videoInput" accept="video/mp4">
+    <label class="upload-box">
+        Click to select videos
+        <input type="file" id="videoInput" accept="video/*" multiple>
+    </label>
 
-<video id="videoPlayer" controls></video>
+    <video id="player" controls></video>
+
+    <div class="video-list" id="videoList"></div>
+</div>
 
 <script>
-document.getElementById("videoInput").addEventListener("change", function (event) {
-    const file = event.target.files[0];
+const input = document.getElementById("videoInput");
+const player = document.getElementById("player");
+const list = document.getElementById("videoList");
 
-    if (file && file.type === "video/mp4") {
-        const videoURL = URL.createObjectURL(file);
-        document.getElementById("videoPlayer").src = videoURL;
-    } else {
-        alert("Please select an MP4 video");
-    }
+input.addEventListener("change", () => {
+    list.innerHTML = "";
+
+    [...input.files].forEach((file, index) => {
+        if (!file.type.startsWith("video/")) return;
+
+        const item = document.createElement("div");
+        item.className = "video-item";
+        item.textContent = file.name;
+
+        item.onclick = () => {
+            player.src = URL.createObjectURL(file);
+            player.play();
+        };
+
+        list.appendChild(item);
+
+        // auto play first video
+        if (index === 0) {
+            player.src = URL.createObjectURL(file);
+        }
+    });
 });
 </script>
 
